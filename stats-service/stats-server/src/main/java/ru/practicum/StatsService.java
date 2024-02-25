@@ -13,6 +13,8 @@ import java.util.Objects;
 /**
  * Stats-Service.
  * - getStats: output with sort on timestamp and uris
+ * output without uris
+ * output without uris unique
  * output with sort on timestamp and uris and unique
  * output with sort without timestamp and uris
  * output with sort without timestamp and uris and unique
@@ -30,24 +32,33 @@ public class StatsService {
     }
 
     public List<ViewStatsDto> getStats(LocalDateTime start, LocalDateTime end, String[] uris, boolean unique) {
-        if (start != null && end == null || start == null && end != null) {
-            throw new RuntimeException("start and end should be null/not null both");
-        }
-
-        if (start != null) {
-            if (Objects.requireNonNull(start).isAfter(end)) {
-                throw new RuntimeException("start should not be after end");
-            }
+        if (uris == null || uris[0] == null) {
             if (!unique) {
-                return statsRepository.getAllStatsByTime(start, end, List.of(uris));
+                return statsRepository.getWithoutUris(start, end);
             } else {
-                return statsRepository.getAllStatsByTimeAndDistinct(start, end, List.of(uris));
+                return statsRepository.getWithoutUrisAndDistinct(start, end);
             }
         } else {
-            if (!unique) {
-                return statsRepository.getAllStats(List.of(uris));
+
+            if (start != null && end == null || start == null && end != null) {
+                throw new RuntimeException("start and end should be null/not null both");
+            }
+
+            if (start != null) {
+                if (Objects.requireNonNull(start).isAfter(end)) {
+                    throw new RuntimeException("start should not be after end");
+                }
+                if (!unique) {
+                    return statsRepository.getAllStatsByTime(start, end, List.of(uris));
+                } else {
+                    return statsRepository.getAllStatsByTimeAndDistinct(start, end, List.of(uris));
+                }
             } else {
-                return statsRepository.getAllStatsDistinct(List.of(uris));
+                if (!unique) {
+                    return statsRepository.getAllStats(List.of(uris));
+                } else {
+                    return statsRepository.getAllStatsDistinct(List.of(uris));
+                }
             }
         }
     }

@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.StatsService;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -40,7 +39,7 @@ public class StatsController {
     public List<ViewStatsDto> getStats(
                            @RequestParam @Nullable @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
                            @RequestParam @Nullable @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
-                           @RequestParam @NotEmpty(message = "uris cannot be empty.")String[] uris,
+                           @RequestParam @Nullable String[] uris,
                            @RequestParam (defaultValue = "false") boolean unique) {
         log.info("request GET/getStats");
 
