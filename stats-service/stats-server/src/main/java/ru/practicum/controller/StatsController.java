@@ -5,10 +5,11 @@ import dto.ViewStatsDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.lang.Nullable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.StatsService;
+import ru.practicum.service.StatsService;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
@@ -29,6 +30,7 @@ public class StatsController {
     private final StatsService statsService;
 
     @PostMapping(HIT)
+    @ResponseStatus(HttpStatus.CREATED)
     public void addHit(@RequestBody @Valid EndpointHitDto hit) {
         log.info("request POST/addHit : {}", hit);
 
@@ -36,9 +38,10 @@ public class StatsController {
     }
 
     @GetMapping(STATS)
+    @ResponseStatus(HttpStatus.OK)
     public List<ViewStatsDto> getStats(
-                           @RequestParam @Nullable @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
-                           @RequestParam @Nullable @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
+                           @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
+                           @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
                            @RequestParam @Nullable String[] uris,
                            @RequestParam (defaultValue = "false") boolean unique) {
         log.info("request GET/getStats");
