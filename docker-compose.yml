@@ -33,6 +33,7 @@ services:
       - "8080:8080"
     depends_on:
       - ewm-db
+      - stats-service
     environment:
       - URL=jdbc:postgresql://ewm-db:5433/ewm_db
       - USERNAME=root
