@@ -24,6 +24,7 @@ public class NewEventDto {
     @NotBlank(message = "description must be not blank/empty.")
     private String description;
 
+  //  @NotBlank(message = "event date must be yyyy-MM-dd HH:mm:ss format.")
     private String eventDate;
 
     private Location location;

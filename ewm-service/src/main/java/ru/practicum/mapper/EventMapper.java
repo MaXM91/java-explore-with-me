@@ -52,6 +52,7 @@ public class EventMapper {
                     .requestModeration(event.isRequestModeration())
                     .state(event.getState().toString())
                     .title(event.getTitle())
+                    .views(0)
                     .build();
         } else {
             return EventFullDto.builder()
@@ -70,6 +71,7 @@ public class EventMapper {
                     .requestModeration(event.isRequestModeration())
                     .state(event.getState().toString())
                     .title(event.getTitle())
+                    .views(0)
                     .build();
         }
     }

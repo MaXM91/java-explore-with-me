@@ -27,8 +27,8 @@ public class StatsClient extends StatsClientBase {
         );
     }
 
-    public EndpointHitDto addEndpointHit(EndpointHitDto hit) {
-        return post(API_HIT_PREFIX, hit);
+    public void addEndpointHit(EndpointHitDto hit) {
+        post(API_HIT_PREFIX, hit);
     }
 
     public List<ViewStatsDto> getViewStats(String start, String end, String[]uris, String unique) {
