@@ -1,12 +1,9 @@
 package dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
 
 @Builder
 @Getter
@@ -15,20 +12,19 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EndpointHitDto {
-    private Long id;
+    private Integer id;
 
-    @NotBlank(message = "app should be not blank/empty")
+    @NotBlank(message = "app should be not blank/empty.")
     private String app;
 
-    @NotBlank(message = "uri should be not blank/empty")
+    @NotBlank(message = "uri should be not blank/empty.")
     private String uri;
 
-    @NotBlank(message = "ip should be not blank/empty")
+    @NotBlank(message = "ip should be not blank/empty.")
     private String ip;
 
-    @NotNull(message = "timestamp should not be null")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime timestamp;
+    @NotNull(message = "timestamp should not be null.")
+    private String timestamp;
 
     @Override
     public String toString() {

@@ -2,7 +2,7 @@ package ru.practicum.validation;
 
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -10,55 +10,67 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.validation.ConstraintViolationException;
-
-/**
- * ErrorHandler.
- */
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestControllerAdvice
 public class ErrorHandler {
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)                          // 500
-    public ErrorResponse badWork(final Exception exc) {
-        getLog(exc.getStackTrace(), exc.getMessage());
-        return new ErrorResponse(getClassStartException(exc.getStackTrace()) + "/" +
-                getMethodStartException(exc.getStackTrace()) + exc.getMessage());
-    }
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)                          // 500
-    public ErrorResponse badWorkDB(final DataAccessException exc) {
-        getLog(exc.getStackTrace(), exc.getMessage());
-        return new ErrorResponse(getClassStartException(exc.getStackTrace()) + "/" +
-                getMethodStartException(exc.getStackTrace()) + exc.getMessage());
+    @ResponseStatus(HttpStatus.BAD_REQUEST)                                    // 400
+    public ApiError violationOfRequestParameters(final ConstraintViolationException exc) {
+        log.error(exc.getMessage(), exc);
+
+        final List<String> violations = exc.getConstraintViolations().stream()
+                .map(violation -> "Field: " + violation.getPropertyPath() + ". Error: " +
+                        violation.getMessage() + " Value: " + violation.getInvalidValue())
+                .collect(Collectors.toList());
+
+        return getResponse(violations);
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)                                    // 400
-    public ErrorResponse badSBValidationUpLevelController(final ConstraintViolationException exc) {
-        getLog(exc.getStackTrace(), exc.getMessage());
-        return new ErrorResponse(getClassStartException(exc.getStackTrace()) + "/" +
-                getMethodStartException(exc.getStackTrace()) + exc.getMessage());
+    public ApiError violationOfRequestBodyParameters(final MethodArgumentNotValidException exc) {
+        log.error(exc.getMessage(), exc);
+
+        final List<String> violations = exc.getBindingResult().getFieldErrors().stream()
+                .map(error -> "Field: " + error.getField() + ". Error: " + error.getDefaultMessage() +
+                        " Value: " + error.getRejectedValue())
+                .collect(Collectors.toList());
+
+        return getResponse(violations);
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)                                    // 400
-    public ErrorResponse badSBValidationOnRequestBody(final MethodArgumentNotValidException exc) {
-        getLog(exc.getStackTrace(), exc.getMessage());
-        return new ErrorResponse(getClassStartException(exc.getStackTrace()) + "/" +
-                getMethodStartException(exc.getStackTrace()) + exc.getMessage());
+    public ApiError violationOfServiceData(final NotValidException exc) {
+        log.error(exc.getMessage(), exc);
+
+        return new ApiError("BAD_REQUEST", "Incorrectly made request.",
+                exc.getLocalizedMessage(), LocalDateTime.now().format(formatter));
     }
 
-    private String getClassStartException(StackTraceElement[] methods) {
-        return methods[3].toString();
+    @ExceptionHandler()
+    @ResponseStatus(HttpStatus.CONFLICT)                                      // 409
+    public ApiError badLogicDataRequest(final DataIntegrityViolationException exc) {
+        log.error(exc.getMessage(), exc);
+
+        return new ApiError("CONFLICT", "Integrity constraint has been violated.",
+                exc.getMessage(), LocalDateTime.now().format(formatter));
     }
 
-    private String getMethodStartException(StackTraceElement[] methods) {
-        return methods[2].toString();
-    }
-
-    private void getLog(StackTraceElement[] methods, String message) {
-        log.info(methods[3].toString() + "/" + methods[2].toString() + ":" + message);
+    private ApiError getResponse(List<String> violations) {
+        if (violations.size() > 1) {
+            return new ApiError(violations, "BAD_REQUEST", "Incorrectly made request.",
+                    LocalDateTime.now().format(formatter));
+        } else {
+            return new ApiError("BAD_REQUEST", "Incorrectly made request.",
+                    violations.get(0), LocalDateTime.now().format(formatter));
+        }
     }
 }
