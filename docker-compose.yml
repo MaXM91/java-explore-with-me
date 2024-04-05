@@ -1,5 +1,32 @@
 version: '3.8'
 services:
+  ewm-service:
+    build: ewm-service
+    image: ewm-service
+    container_name: ewm-service
+    ports:
+      - "8080:8080"
+    depends_on:
+      - ewm-db
+      - stats-service
+    environment:
+      - STATS_SERVER_URL=http://stats-service:9090
+      - URL=jdbc:postgresql://ewm-db:5432/ewm
+      - USERNAME=root
+      - PASSWORD=root
+    #  - TZ=Asia/Yekaterinburg
+
+  ewm-db:
+    image: postgres:14-alpine
+    container_name: ewm-db
+    ports:
+      - "6542:5432"
+    environment:
+      - POSTGRES_DB=ewm
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+     # - TZ=Asia/Yekaterinburg
+
   stats-service:
     build: stats-service/stats-server
     image: stats-server
@@ -9,10 +36,10 @@ services:
     depends_on:
       - stats-db
     environment:
-      - URL=jdbc:postgresql://stats-db:5432/stats_db
+      - URL=jdbc:postgresql://stats-db:5432/stats
       - USERNAME=root
       - PASSWORD=root
-      - TZ=Europe/Yekaterinburg
+      #- TZ=Asia/Yekaterinburg
 
   stats-db:
     image: postgres:14-alpine
@@ -20,32 +47,7 @@ services:
     ports:
       - "6541:5432"
     environment:
-      - POSTGRES_DB=stats_db
+      - POSTGRES_DB=stats
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
-      - TZ=TZ=Europe/Yekaterinburg
-
-  ewm-service:
-    build: ewm-service
-    image: ewm-service
-    container_name: ewm-service
-    ports:
-      - "8080:8080"
-    depends_on:
-      - ewm-db
-    environment:
-      - URL=jdbc:postgresql://ewm-db:5433/ewm_db
-      - USERNAME=root
-      - PASSWORD=root
-      - TZ=Europe/Yekaterinburg
-
-  ewm-db:
-    image: postgres:14-alpine
-    container_name: ewm-db
-    ports:
-      - "6542:5433"
-    environment:
-      - POSTGRES_DB=ewm_db
-      - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=root
-      - TZ=TZ=Europe/Yekaterinburg
+      #6- TZ=Asia/Yekaterinburg

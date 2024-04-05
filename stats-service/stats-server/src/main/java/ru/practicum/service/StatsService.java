@@ -1,14 +1,16 @@
-package ru.practicum;
+package ru.practicum.service;
 
 import dto.EndpointHitDto;
 import dto.ViewStatsDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.practicum.StatsMapper;
+import ru.practicum.StatsRepository;
+import ru.practicum.validation.NotValidException;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Stats-Service.
@@ -32,34 +34,26 @@ public class StatsService {
     }
 
     public List<ViewStatsDto> getStats(LocalDateTime start, LocalDateTime end, String[] uris, boolean unique) {
-        if (uris == null || uris[0] == null) {
-            if (!unique) {
-                return statsRepository.getWithoutUris(start, end);
-            } else {
-                return statsRepository.getWithoutUrisAndDistinct(start, end);
-            }
-        } else {
-
-            if (start != null && end == null || start == null && end != null) {
-                throw new RuntimeException("start and end should be null/not null both");
+            if (start.isAfter(end)) {
+                throw new NotValidException("The start date cannot be later than the end date.");
             }
 
-            if (start != null) {
-                if (Objects.requireNonNull(start).isAfter(end)) {
-                    throw new RuntimeException("start should not be after end");
-                }
-                if (!unique) {
-                    return statsRepository.getAllStatsByTime(start, end, List.of(uris));
+            if (start.equals(end)) {
+                throw new NotValidException("The start date cannot be equals the end date.");
+            }
+
+            if (uris != null && uris[0] != null) {
+                if (unique) {
+                    return statsRepository.findAllByStartAndEndAndUrisAndUnique(start, end, uris);
                 } else {
-                    return statsRepository.getAllStatsByTimeAndDistinct(start, end, List.of(uris));
+                    return statsRepository.findAllByStartAndEndAndUris(start, end, uris);
                 }
             } else {
-                if (!unique) {
-                    return statsRepository.getAllStats(List.of(uris));
+                if (unique) {
+                    return statsRepository.findAllByStartAndEndAndUnique(start, end);
                 } else {
-                    return statsRepository.getAllStatsDistinct(List.of(uris));
+                    return statsRepository.findAllByStartAndEnd(start, end);
                 }
             }
-        }
     }
 }
