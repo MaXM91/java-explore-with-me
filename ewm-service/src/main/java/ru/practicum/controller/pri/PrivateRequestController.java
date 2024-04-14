@@ -11,12 +11,20 @@ import ru.practicum.service.RequestService;
 import javax.validation.constraints.Positive;
 import java.util.List;
 
+/**
+ * PrivateRequestController
+ *  - addRequestPrivate - add request
+ *  - getParticipationRequestDtoByIdPrivate - get list requests by owner id
+ *  - updateStatusPrivate - update status request, on canceled
+ */
+
 @Slf4j
 @Validated
 @RestController
 @RequestMapping("users/{userId}/requests")
 @RequiredArgsConstructor
 public class PrivateRequestController {
+    private static final String Request_Cancel = "/{requestId}/cancel";
     private final RequestService requestService;
 
     @PostMapping
@@ -46,7 +54,7 @@ public class PrivateRequestController {
         return response;
     }
 
-    @PatchMapping("/{requestId}/cancel")
+    @PatchMapping(Request_Cancel)
     @ResponseStatus(HttpStatus.OK)
     public ParticipationRequestDto updateStatusPrivate(@Positive(message = "user id must be positive.")
                                                        @PathVariable("userId") Integer userId,

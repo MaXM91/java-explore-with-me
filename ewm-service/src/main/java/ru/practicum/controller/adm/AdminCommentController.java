@@ -10,15 +10,22 @@ import ru.practicum.service.CommentService;
 
 import javax.validation.constraints.Positive;
 
+/**
+ * AdminCommentController
+ *  - blockCommentAdmin - update comment, change text comment on "comment blocked by admin"
+ *  - deleteCommentAdmin - delete comment by admin
+ */
+
 @Slf4j
 @Validated
 @RestController
 @RequestMapping(path = "/admin/comments")
 @RequiredArgsConstructor
 public class AdminCommentController {
+    private static final String Comment = "/{commentId}";
     private final CommentService commentService;
 
-    @PatchMapping("/{commentId}")
+    @PatchMapping(Comment)
     @ResponseStatus(HttpStatus.OK)
     public CommentDto blockCommentAdmin(@Positive(message = "commentId must be positive.")
                                             @PathVariable("commentId") Integer commentId) {
@@ -30,7 +37,7 @@ public class AdminCommentController {
         return response;
     }
 
-    @DeleteMapping("/{commentId}")
+    @DeleteMapping(Comment)
     @ResponseStatus(HttpStatus.OK)
     public void deleteCommentAdmin(@Positive(message = "commentId must be positive.")
                                              @PathVariable("commentId") Integer commentId) {

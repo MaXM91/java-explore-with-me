@@ -14,12 +14,20 @@ import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import java.util.List;
 
+/**
+ * AdminUsersController.
+ *  - addUserAdmin - add user
+ *  - getUsersAdmin - get users on page
+ *  - deleteUserAdmin - delete user by id
+ */
+
 @Slf4j
 @Validated
 @RestController
 @RequestMapping(path = "/admin/users")
 @RequiredArgsConstructor
 public class AdminUsersController {
+    private static final String User = "/{userId}";
     private final UserService userService;
 
     @PostMapping
@@ -46,7 +54,7 @@ public class AdminUsersController {
         return response;
     }
 
-    @DeleteMapping("/{userId}")
+    @DeleteMapping(User)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteUserAdmin(@Positive(message = "user id must be positive.")
                                 @PathVariable(name = "userId") int userId) {

@@ -12,6 +12,11 @@ import org.springframework.web.util.DefaultUriBuilderFactory;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * StatsClient.
+ * required to access Stats-Service from others services
+ */
+
 @Service
 public class StatsClient extends StatsClientBase {
     private static final String API_PREFIX = "/";

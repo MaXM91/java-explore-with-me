@@ -16,12 +16,19 @@ import javax.validation.constraints.Positive;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * PublicEventController
+ *  - getEventsPublic - get list events from page by selection parameters
+ *  - getOnlyPublicEventByIdPublic - get event by id, public only
+ */
+
 @Slf4j
 @Validated
 @RestController
 @RequestMapping(path = "/events")
 @RequiredArgsConstructor
 public class PublicEventController {
+    private static final String Event = "/{id}";
     private final EventService eventService;
     private final StatsClient client;
 
@@ -52,7 +59,7 @@ public class PublicEventController {
        return response;
     }
 
-    @GetMapping("/{id}")
+    @GetMapping(Event)
     @ResponseStatus(HttpStatus.OK)
     public EventFullDto getOnlyPublicEventByIdPublic(@Positive(message = "event id must be positive.")
                                                      @PathVariable("id") Integer id,

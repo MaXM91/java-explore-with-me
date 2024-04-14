@@ -17,6 +17,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * CompilationService
+ */
+
 @Transactional
 @Service
 @RequiredArgsConstructor
@@ -25,6 +29,11 @@ public class CompilationService {
     private final CompilationRepository compilationRepository;
     private final EventRepository eventRepository;
 
+    /**
+     *
+     * @param newCompilationDto - new compilation
+     * @return - compilation
+     */
     public CompilationDto addCompilationAdmin(NewCompilationDto newCompilationDto) {
         if (newCompilationDto.getEvents() != null) {
             List<Integer> eventsId = newCompilationDto.getEvents().stream()
@@ -46,11 +55,23 @@ public class CompilationService {
         }
     }
 
+    /**
+     *
+     * @param compId - compilation id
+     * @return - compilation by id
+     */
     public CompilationDto getCompilationByIdPublic(int compId) {
         Compilation foundedCompilation = checkCompilation(compId);
         return compilationMapper.toCompilationDto(foundedCompilation);
     }
 
+    /**
+     *
+     * @param pinned - is the selection fixed on the main page of the site
+     * @param from - start page
+     * @param size - size compilations on page
+     * @return get list compilation from page by pinned
+     */
     public List<CompilationDto> getCompilationPublic(Boolean pinned, int from, int size) {
         if (pinned == null) {
             return compilationRepository.findAll(PageRequest.of(from, size)).stream()
@@ -63,6 +84,12 @@ public class CompilationService {
         }
     }
 
+    /**
+     *
+     * @param compId - compilation id
+     * @param updateCompilationRequest - update compilation
+     * @return - updated compilation
+     */
     public CompilationDto updateCompilationAdmin(int compId, UpdateCompilationRequest updateCompilationRequest) {
         Compilation foundedCompilation = checkCompilation(compId);
 
@@ -81,11 +108,20 @@ public class CompilationService {
         return compilationMapper.toCompilationDto(compilationRepository.save(foundedCompilation));
     }
 
+    /**
+     *
+     * @param compId - compilation id
+     * @return - compilation by id or not found exception
+     */
     private Compilation checkCompilation(int compId) {
         return compilationRepository.findById(compId).orElseThrow(() ->
                 new ObjectNotFoundException("compilation id - " + compId + " not found"));
     }
 
+    /**
+     *
+     * @param compId - compilation id for delete
+     */
     public void deleteCompilationAdmin(int compId) {
         checkCompilation(compId);
 

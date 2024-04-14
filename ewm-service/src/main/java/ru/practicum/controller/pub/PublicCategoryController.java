@@ -11,15 +11,22 @@ import ru.practicum.service.CategoryService;
 import javax.validation.constraints.Positive;
 import java.util.List;
 
+/**
+ * PublicCategoryController.
+ *  - getCategoryByIdPublic - get category by id
+ *  - getAllCategoriesPublic - get list categories from page
+ */
+
 @Slf4j
 @Validated
 @RestController
 @RequestMapping("/categories")
 @RequiredArgsConstructor
 public class PublicCategoryController {
+    private static final String Category = "/{catId}";
     private final CategoryService categoryService;
 
-    @GetMapping("/{catId}")
+    @GetMapping(Category)
     @ResponseStatus(HttpStatus.OK)
     public CategoryDto getCategoryByIdPublic(@Positive(message = "category id must be positive.")
                                              @PathVariable(name = "catId") int catId) {

@@ -13,12 +13,24 @@ import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import java.util.List;
 
+/**
+ * PrivateEventsController
+ *  - addEventPrivate - add new event
+ *  - getEventsByUserIdPrivate - get list events from page by user id
+ *  - getEventByUserIdAndEventIdPrivate - get event by user id and event id
+ *  - getRequestsOnEventByThisUserPrivate - get requests
+ *  - updateEventPrivate - update event
+ *  - changeStatusRequestOnEventByThisUserPrivate - change status request from requester by owner event
+ */
+
 @Slf4j
 @Validated
 @RestController
 @RequestMapping("/users/{userId}/events")
 @RequiredArgsConstructor
 public class PrivateEventsController {
+    private static final String Event = "/{eventId}";
+    private static final String Request_On_Event = "/{eventId}/requests";
     private final EventService eventService;
     private final RequestService requestService;
 
@@ -49,7 +61,7 @@ public class PrivateEventsController {
         return response;
     }
 
-    @GetMapping("/{eventId}")
+    @GetMapping(Event)
     @ResponseStatus(HttpStatus.OK)
     public EventFullDto getEventByUserIdAndEventIdPrivate(@Positive(message = "user id must be positive.")
                                                           @PathVariable("userId") Integer userId,
@@ -63,7 +75,7 @@ public class PrivateEventsController {
         return response;
     }
 
-    @GetMapping("/{eventId}/requests")
+    @GetMapping(Request_On_Event)
     @ResponseStatus(HttpStatus.OK)
     public List<ParticipationRequestDto> getRequestsOnEventByThisUserPrivate(
                                                                @Positive(message = "user id must be positive.")
@@ -78,7 +90,7 @@ public class PrivateEventsController {
         return response;
     }
 
-    @PatchMapping("/{eventId}")
+    @PatchMapping(Event)
     @ResponseStatus(HttpStatus.OK)
     public EventFullDto updateEventPrivate(@Positive(message = "user id must be positive.")
                                            @PathVariable("userId") Integer userId,
@@ -94,7 +106,7 @@ public class PrivateEventsController {
         return response;
     }
 
-    @PatchMapping("/{eventId}/requests")
+    @PatchMapping(Request_On_Event)
     @ResponseStatus(HttpStatus.OK)
     public EventRequestStatusUpdateResult changeStatusRequestOnEventByThisUserPrivate(
                                  @Positive(message = "user id must be positive.")

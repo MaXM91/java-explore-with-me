@@ -16,12 +16,19 @@ import javax.validation.constraints.Positive;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * AdminEventsController
+ *  - getSuitableEventsAdmin - get list events depending on the availability of the selection parameters
+ *  - changeDataOrStatusEventAdmin - update event params
+ */
+
 @Slf4j
 @Validated
 @RestController
 @RequestMapping(path = "/admin/events")
 @RequiredArgsConstructor
 public class AdminEventsController {
+    private static final String Event = "/{eventId}";
     private final EventService eventService;
 
     @GetMapping
@@ -48,7 +55,7 @@ public class AdminEventsController {
         return response;
     }
 
-    @PatchMapping("/{eventId}")
+    @PatchMapping(Event)
     @ResponseStatus(HttpStatus.OK)
     public EventFullDto changeDataOrStatusEventAdmin(@Positive(message = "event id must be positive.")
                                                  @PathVariable(name = "eventId") Integer eventId,

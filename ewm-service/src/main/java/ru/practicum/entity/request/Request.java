@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
  */
 
 @Entity
-@Table(name = "request")
+@Table(name = "requests")
 @Builder
 @Getter
 @Setter

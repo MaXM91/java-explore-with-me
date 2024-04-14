@@ -12,12 +12,20 @@ import ru.practicum.service.CategoryService;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 
+/**
+ * AdminCategoriesController.
+ *  - addCategoryAdmin - add category
+ *  - patchCategoryAdmin - patch category
+ *  - deleteCategoryAdmin - delete category
+ */
+
 @Slf4j
 @Validated
 @RestController
 @RequestMapping(path = "/admin/categories")
 @RequiredArgsConstructor
 public class AdminCategoriesController {
+    private static final String Category = "/{catId}";
     private final CategoryService categoryService;
 
     @PostMapping
@@ -31,7 +39,7 @@ public class AdminCategoriesController {
         return response;
     }
 
-    @PatchMapping("/{catId}")
+    @PatchMapping(Category)
     @ResponseStatus(HttpStatus.OK)
     public CategoryDto patchCategoryAdmin(@Positive(message = "category id must be positive.")
                                           @PathVariable(name = "catId") int catId,
@@ -44,7 +52,7 @@ public class AdminCategoriesController {
         return response;
     }
 
-    @DeleteMapping("/{catId}")
+    @DeleteMapping(Category)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteCategoryAdmin(@Positive(message = "category id must be positive.")
                                     @PathVariable(name = "catId") int catId) {

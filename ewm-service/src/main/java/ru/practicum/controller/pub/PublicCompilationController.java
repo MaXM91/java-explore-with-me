@@ -12,12 +12,19 @@ import ru.practicum.service.compilation.CompilationService;
 import javax.validation.constraints.Positive;
 import java.util.List;
 
+/**
+ * CompilationService
+ *  - getCompilationPublic - get list compilation from page
+ *  - getCompilationByIdPublic - get published compilation by id
+ */
+
 @Slf4j
 @Validated
 @RestController
 @RequestMapping("/compilations")
 @RequiredArgsConstructor
 public class PublicCompilationController {
+    private static final String Compilation = "/{compId}";
     private final CompilationService compilationService;
 
     @GetMapping
@@ -34,7 +41,7 @@ public class PublicCompilationController {
         return response;
     }
 
-    @GetMapping("/{compId}")
+    @GetMapping(Compilation)
     @ResponseStatus(HttpStatus.OK)
     public CompilationDto getCompilationByIdPublic(@Positive(message = "compId must be positive or null.")
                                                    @PathVariable(name = "compId") int compId) {

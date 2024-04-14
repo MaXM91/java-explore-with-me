@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "50cecc7b-fb3b-470d-9e7b-89ab4dea192d",
+		"_postman_id": "302cd706-2f24-499c-a58d-2c983b28a46a",
 		"name": "Test Explore With Me - feat comments",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "26106801"
@@ -146,11 +146,16 @@
 											"        const user1 = await api.addUser(rnd.getUser());\r",
 											"        const category = await api.addCategory(rnd.getCategory());\r",
 											"        const event = await api.addEvent(user.id, rnd.getEvent(category.id));\r",
+											"        const comment = await api.addComment(user.id, event.id,\r",
+											"            {\r",
+											"                \"text\" : \"comm1\",\r",
+											"            });\r",
 											"        compilation = rnd.getCompilation(event.id);\r",
 											"\r",
 											"        pm.collectionVariables.set(\"uid\", user.id)\r",
 											"        pm.collectionVariables.set(\"uid1\", user1.id)\r",
 											"        pm.collectionVariables.set(\"eid\", event.id)\r",
+											"        pm.collectionVariables.set(\"cid\", comment.id)\r",
 											"    } catch(err) {\r",
 											"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
 											"    }\r",
@@ -211,7 +216,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"text\" : \"adsiofusadofjis asdkfmsdlfgsolk saldfksdokgfo2\",\r\n    \"responseToUser\" : {{uid1}}\r\n}",
+									"raw": "{\r\n    \"text\" : \"adsiofusadofjis asdkfmsdlfgsolk saldfksdokgfo2\",\r\n    \"responseToUser\" : {{uid}}\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -219,7 +224,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{baseUrl}}/users/:userId/events/:eventId/comments",
+									"raw": "{{baseUrl}}/users/:userId/events/:eventId/comments/:commentId",
 									"host": [
 										"{{baseUrl}}"
 									],
@@ -228,16 +233,21 @@
 										":userId",
 										"events",
 										":eventId",
-										"comments"
+										"comments",
+										":commentId"
 									],
 									"variable": [
 										{
 											"key": "userId",
-											"value": "{{uid}}"
+											"value": "{{uid1}}"
 										},
 										{
 											"key": "eventId",
 											"value": "{{eid}}"
+										},
+										{
+											"key": "commentId",
+											"value": "{{cid}}"
 										}
 									]
 								}
@@ -382,20 +392,18 @@
 											"    const api = new API(pm);\r",
 											"    const rnd = new RandomUtils();\r",
 											"\r",
-											"    let compilation;\r",
 											"    try {\r",
 											"        const user = await api.addUser(rnd.getUser());\r",
 											"        const user1 = await api.addUser(rnd.getUser());\r",
 											"        const category = await api.addCategory(rnd.getCategory());\r",
 											"        const event = await api.addEvent(user.id, rnd.getEvent(category.id));\r",
-											"        compilation = rnd.getCompilation(event.id);\r",
 											"\r",
 											"        const comment = await api.addComment(user.id, event.id, {\"text\" : \"comment1\"});\r",
-											"        const comment1 = await api.addComment(user1.id, event.id, {\"text\" : \"comment1\", \"responseToUser\" : user1.id});\r",
+											"        const comment1 = await api.addSonComment(user1.id, event.id, comment.id, {\"text\" : \"comment2\", \"responseToUser\" : user.id});\r",
 											"\r",
 											"        pm.collectionVariables.set(\"uid\", user.id)\r",
 											"        pm.collectionVariables.set(\"eid\", event.id)\r",
-											"        pm.collectionVariables.set(\"cid\", comment1.id)\r",
+											"        pm.collectionVariables.set(\"cid\", comment1)\r",
 											"    } catch(err) {\r",
 											"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
 											"    }\r",
@@ -983,6 +991,10 @@
 					"        return this.post(\"/users/\" + userId + \"/events/\" + eventId + \"/comments\", comment, \"Ошибка при добавлении нового комментария: \", verbose);",
 					"    }",
 					"",
+					"    async addSonComment(userId, eventId, commentId, comment, verbose=null) {",
+					"        return this.post(\"/users/\" + userId + \"/events/\" + eventId + \"/comments/\" + commentId, comment, \"Ошибка при добавлении нового подкомментария: \", verbose);",
+					"    }",
+					"",
 					"    async publishParticipationRequest(eventId, userId, verbose=null) {",
 					"        return this.post('/users/' + userId + '/requests?eventId=' + eventId, null, \"Ошибка при добавлении нового запроса на участие в событии\", verbose);",
 					"    }",
@@ -1208,7 +1220,7 @@
 		},
 		{
 			"key": "uid1",
-			"value": ""
+			"value": "1"
 		},
 		{
 			"key": "reqid",
@@ -1245,7 +1257,7 @@
 		},
 		{
 			"key": "cid",
-			"value": "",
+			"value": "1",
 			"type": "string"
 		}
 	]

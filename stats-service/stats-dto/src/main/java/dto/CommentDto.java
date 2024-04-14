@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Builder
 @Getter
@@ -23,15 +24,17 @@ public class CommentDto {
 
     private UserDto responseToUser;
 
+    private List<CommentDto> commentsList;
+
     @Override
     public String toString() {
-        return  "\n" +
-                "     Comment{" + "\n" +
+        return  "  CommentDto{" + "\n" +
                 "             id = " + id + "\n" +
                 "             text = " + text + "\n" +
                 "             registrationTime = " + registrationTime + "\n" +
-                "             owner = " + owner + "\n" +
-                "             responseToUser = " + responseToUser + "\n" +
+                "                 owner = " + owner + "\n" +
+                "                 responseToUser = " + responseToUser + "\n" +
+                "                         commentsList = " + commentsList + "\n" +
                 "             }";
     }
 }

@@ -35,7 +35,7 @@ import java.time.LocalDateTime;
  */
 
 @Entity
-@Table(name = "event")
+@Table(name = "events")
 @Builder
 @Getter
 @Setter
@@ -77,8 +77,6 @@ public class Event {
     @Column(name = "lon")
     private double lon;
 
-    @Getter
-    @Setter
     @Column(name = "paid")
     private boolean paid;
 
@@ -88,8 +86,6 @@ public class Event {
     @Column(name = "published_on")
     private LocalDateTime publishedOn;
 
-    @Getter
-    @Setter
     @Column(name = "request_moderation")
     private boolean requestModeration;
 
