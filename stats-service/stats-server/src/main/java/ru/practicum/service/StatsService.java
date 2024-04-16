@@ -29,10 +29,22 @@ public class StatsService {
     private final StatsRepository statsRepository;
     private final StatsMapper statsMapper;
 
+    /**
+     *
+     * @param hit - stats information
+     */
     public void addHit(EndpointHitDto hit) {
         statsRepository.save(statsMapper.toEndpointHit(hit));
     }
 
+    /**
+     *
+     * @param start - min LocalDateTime
+     * @param end - max LocalDateTime
+     * @param uris - list of endpoints
+     * @param unique - unique ip addresses false/true
+     * @return - List<ViewStatsDto> depending on the availability of the selection parameters
+     */
     public List<ViewStatsDto> getStats(LocalDateTime start, LocalDateTime end, String[] uris, boolean unique) {
             if (start.isAfter(end)) {
                 throw new NotValidException("The start date cannot be later than the end date.");

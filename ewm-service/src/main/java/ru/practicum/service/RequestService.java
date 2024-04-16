@@ -21,6 +21,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * RequestService
+ */
+
 @Transactional
 @Service
 @RequiredArgsConstructor
@@ -30,6 +34,12 @@ public class RequestService {
     private final EventRepository eventRepository;
     private final RequestMapper requestMapper;
 
+    /**
+     *
+     * @param userId - user id
+     * @param eventId - event id
+     * @return request on event, logic constraint datetime, published, your event, participant limit
+     */
     public ParticipationRequestDto addRequestPrivate(int userId, int eventId) {
         User foundedUser = checkUser(userId);
         Event foundedEvent = checkEvent(eventId);
@@ -64,6 +74,11 @@ public class RequestService {
         return requestMapper.toParticipationRequestDto(requestRepository.save(response));
     }
 
+    /**
+     *
+     * @param userId - owner requests(user) id
+     * @return list requests by owner id
+     */
     public List<ParticipationRequestDto> getParticipationRequestDtoByIdPrivate(int userId) {
         checkUser(userId);
 
@@ -72,6 +87,12 @@ public class RequestService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     *
+     * @param userId - user id
+     * @param eventId - event id
+     * @return - list requests by event id
+     */
     public List<ParticipationRequestDto> getRequestsOnEventByThisUserPrivate(int userId, int eventId) {
         checkUser(userId);
         checkEvent(eventId);
@@ -81,6 +102,12 @@ public class RequestService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     *
+     * @param userId - owner event(user) id
+     * @param requestId - request id
+     * @return - update request(status) by owner event
+     */
     public ParticipationRequestDto updateStatusPrivate(int userId, int requestId) {
         checkUser(userId);
 
@@ -95,6 +122,13 @@ public class RequestService {
         return requestMapper.toParticipationRequestDto(requestRepository.save(response));
     }
 
+    /**
+     *
+     * @param userId - user id
+     * @param eventId - event id
+     * @param eventRequestStatusUpdateRequest - update request
+     * @return - updated request by owner request, logic constraint datetime, confirmed, participant limit
+     */
     public EventRequestStatusUpdateResult changeStatusRequestOnEventByThisUserPrivate(int userId, int eventId,
         EventRequestStatusUpdateRequest eventRequestStatusUpdateRequest) {
 

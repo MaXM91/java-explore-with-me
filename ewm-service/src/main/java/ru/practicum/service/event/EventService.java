@@ -29,6 +29,10 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * EventService
+ */
+
 @Transactional
 @Service
 @RequiredArgsConstructor
@@ -39,6 +43,12 @@ public class EventService {
     private final CategoryRepository categoryRepository;
     private final EventMapper eventMapper;
 
+    /**
+     *
+     * @param userId - owner event (user) id
+     * @param newEventDto - new event
+     * @return - event, logic constraint on participant limit and datetime
+     */
     public EventFullDto addEventPrivate(int userId, NewEventDto newEventDto) {
         if (LocalDateTime.parse(newEventDto.getEventDate(), formatter).isBefore(LocalDateTime.now().plusHours(2))) {
             throw new NotValidException("The start date of the event must be no earlier than 2 hours from the" +
@@ -53,12 +63,26 @@ public class EventService {
                 checkCategory(newEventDto.getCategory()), newEventDto)));
     }
 
+    /**
+     *
+     * @param userId - owner events(user) id
+     * @param from - start page
+     * @param size - size events on page
+     * @return - list events from page by owner events (user) id
+     */
     public List<EventShortDto> getEventsByUserIdPrivate(int userId, int from, int size) {
         return eventRepository.findAllByInitiatorId(userId, PageRequest.of(from, size)).stream()
                 .map(eventMapper::toEventShortDto)
                 .collect(Collectors.toList());
     }
 
+    /**
+     *
+     * @param id - event id
+     * @param servletRequest - HttpServletRequest for send stats hit on stats-service
+     * @param client - client for send stats hit
+     * @return - published event by id, logic constraint published
+     */
     public EventFullDto getOnlyPublicEventByIdPublic(int id, HttpServletRequest servletRequest, StatsClient client) {
         Event foundedEvent = eventRepository.findByIdAndState(id, State.PUBLISHED).orElseThrow(() ->
                 new ObjectNotFoundException("published event id - " + id + " not found"));
@@ -79,11 +103,33 @@ public class EventService {
         return response;
     }
 
+    /**
+     *
+     * @param userId - owner event(user) id
+     * @param eventId - event id
+     * @return - event
+     */
     public EventFullDto getEventByUserIdAndEventIdPrivate(int userId, int eventId) {
         checkUser(userId);
 
         return eventMapper.toEventFullDto(checkEvent(eventId));
     }
+
+    /**
+     * selection parameters:
+     * @param text - text
+     * @param categories - array categories
+     * @param paid - paid
+     * @param rangeStart - datetime start, found after this time
+     * @param rangeEnd - datetime end, found before this time
+     * @param onlyAvailable - available
+     * @param sort - sort on EVENT_DATE/VIEWS(from statistic)
+     * @param from - start page
+     * @param size - size events on page
+     * @param servletRequest - HttpServletRequest
+     * @param client - Stats-Client
+     * @return - list events from page by selection parameters, logic constraint datetime, published
+     */
 
     public List<EventFullDto> getEventsPublic(String text, Integer[] categories, Boolean paid, LocalDateTime rangeStart,
                                         LocalDateTime rangeEnd, Boolean onlyAvailable, String sort, int from, int size,
@@ -133,6 +179,17 @@ public class EventService {
         return changeStatistic(servletRequest, response, client, true);
     }
 
+    /**
+     * selection parameters:
+     * @param users - array users
+     * @param states - array states
+     * @param categories - array categories
+     * @param rangeStart - datetime start, found after this time
+     * @param rangeEnd - datetime end, found before this time
+     * @param from - start page
+     * @param size - size events on page
+     * @return - list events from page by  selection parameters
+     */
     public List<EventFullDto> getSuitableEventsAdmin(Integer[] users, String[] states, Integer[] categories,
                                                      LocalDateTime rangeStart, LocalDateTime rangeEnd, int from,
                                                      int size) {
@@ -146,6 +203,13 @@ public class EventService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     *
+     * @param userId - user id
+     * @param eventId - event id
+     * @param updateEventUserRequest update event
+     * @return - update event, logic constraint datetime, not published
+     */
     public EventFullDto updateEventPrivate(int userId, int eventId, UpdateEventUserRequest updateEventUserRequest) {
         checkUser(userId);
 
@@ -210,6 +274,12 @@ public class EventService {
         return eventMapper.toEventFullDto(eventRepository.save(foundedEvent));
     }
 
+    /**
+     *
+     * @param eventId - event id
+     * @param updateEventAdminRequest - update event
+     * @return - event with update datetime, status
+     */
     public EventFullDto changeDataOrStatusEventAdmin(int eventId, UpdateEventAdminRequest updateEventAdminRequest) {
         Event foundedEvent = checkEvent(eventId);
 
@@ -286,16 +356,31 @@ public class EventService {
         return eventMapper.toEventFullDto(eventRepository.save(foundedEvent));
     }
 
+    /**
+     *
+     * @param userId - user id
+     * @return - check user or not found exception
+     */
     private User checkUser(int userId) {
         return userRepository.findById(userId).orElseThrow(() ->
                 new ObjectNotFoundException("user id - " + userId + " not found"));
     }
 
+    /**
+     *
+     * @param categoryId - category id
+     * @return - check category or not found exception
+     */
     private Category checkCategory(int categoryId) {
         return categoryRepository.findById(categoryId).orElseThrow(() ->
                 new ObjectNotFoundException("category id - " + categoryId + " not found"));
     }
 
+    /**
+     *
+     * @param eventId - event id
+     * @return - check event or not found exception
+     */
     private Event checkEvent(int eventId) {
         return eventRepository.findById(eventId).orElseThrow(() ->
                 new ObjectNotFoundException("event id - " + eventId + " not found"));

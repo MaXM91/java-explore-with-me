@@ -13,12 +13,20 @@ import ru.practicum.service.compilation.CompilationService;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 
+/**
+ * CompilationService
+ *  - addCompilationAdmin - add compilation
+ *  - updateCompilationAdmin - update compilation
+ *  - deleteCompilationAdmin - delete compilation by id
+ */
+
 @Slf4j
 @Validated
 @RequestMapping(path = "/admin/compilations")
 @RestController
 @RequiredArgsConstructor
 public class AdminCompilationController {
+    private static final String Compilation = "/{compId}";
     private final CompilationService compilationService;
 
     @PostMapping
@@ -32,7 +40,7 @@ public class AdminCompilationController {
         return response;
     }
 
-    @PatchMapping("/{compId}")
+    @PatchMapping(Compilation)
     @ResponseStatus(HttpStatus.OK)
     public CompilationDto updateCompilationAdmin(@Positive(message = "compilation id must be positive.")
                                                  @PathVariable(name = "compId") int compId,
@@ -46,7 +54,7 @@ public class AdminCompilationController {
         return response;
     }
 
-    @DeleteMapping("/{compId}")
+    @DeleteMapping(Compilation)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteCompilationAdmin(@Positive(message = "compilation id must be positive.")
                                        @PathVariable(name = "compId") int compId) {

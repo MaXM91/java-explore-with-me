@@ -15,7 +15,7 @@ import java.util.List;
  */
 
 @Entity
-@Table(name = "compilation")
+@Table(name = "compilations")
 @Builder
 @Getter
 @Setter
