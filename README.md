@@ -1,8 +1,10 @@
 # java-explore-with-me
 ![project.png](stats-service%2Fstats-server%2Fsrc%2Fmain%2Fresources%2Fstatic%2Fproject.png)
 ExploreWithMe project.
+The service is a poster that allows users to share information about interesting events and find a company to participate in them.
 
 Stats-service.
+
 Hits:
 - POST /hit - add statistic hit
 - GET /stats - get statistic
